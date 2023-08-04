@@ -46,6 +46,29 @@ interface Attachment {
 	content_type: string;
 	spoiler: boolean;
 }
+
+interface Gif {
+	format: number;
+	src: string;
+	width: number;
+	height: number;
+	order: number;
+}
+
+interface Versions {
+	clientVersion: number;
+	serverVersion: number;
+	dataVersion: number;
+}
+
+interface FavoriteGifs {
+	gifs: Record<string, Gif>;
+}
+
+export interface FrecencyStore {
+	versions: Versions;
+	favoriteGifs: FavoriteGifs;
+}  
   
 export interface Message {
 	embeds: (ImageEmbed | GifvEmbed)[];
@@ -69,4 +92,25 @@ export function getGifUrl(message: Message): string | null {
   
 	return null;
 }
+
+export function filterOutFirstAndLast(favorites: FrecencyStore): FrecencyStore {
+	const gifEntries = Object.entries(favorites.favoriteGifs.gifs);
   
+	// Sort the gif entries by the order property
+	gifEntries.sort((a, b) => a[1].order - b[1].order);
+  
+	// Remove the first and last entries
+	if (gifEntries.length > 2) {
+	  gifEntries.pop();
+	  gifEntries.shift();
+	}
+  
+	// Construct the new favoriteGifs object
+	const newFavoriteGifs = gifEntries.reduce((gifs, [url, gif]) => {
+	  gifs[url] = gif;
+	  return gifs;
+	}, {} as Record<string, Gif>);
+  
+	// Return the new favorites object
+	return { ...favorites, favoriteGifs: { gifs: newFavoriteGifs } };
+  }  
