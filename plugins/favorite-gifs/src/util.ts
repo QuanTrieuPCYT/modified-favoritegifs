@@ -75,42 +75,47 @@ export interface Message {
 	attachments: Attachment[];
 }
   
-export function getGifUrl(message: Message): string | null {
+export function addGifToFavorites(currentGifs: Record<string, Gif>, gifDetails: { url: string, width: number, height: number, format: number }): Record<string, Gif> {
+    const maxOrder = Math.max(...Object.values(currentGifs).map(gif => gif.order));
+
+    const newGif: Gif = {
+        format: gifDetails.format,
+        src: gifDetails.url,
+        width: gifDetails.width,
+        height: gifDetails.height,
+        order: maxOrder + 1,
+    };
+
+    return {
+        ...currentGifs,
+        [gifDetails.url]: newGif
+    };
+}
+
+export function getGifDetails(message: Message): { url: string, width: number, height: number, format: number } | null {
 	for (let embed of message.embeds) {
 	  if (embed.type === 'gifv') {
-		return (embed as GifvEmbed).url;
+		return { 
+            url: (embed as GifvEmbed).url,
+            width: (embed as GifvEmbed).thumbnail.width,
+            height: (embed as GifvEmbed).thumbnail.height,
+            format: 2
+        };
 	  } else if (embed.type === 'image' && embed.url.endsWith('.gif')) {
-		return (embed as ImageEmbed).url;
+		return { 
+            url: (embed as ImageEmbed).url, 
+            width: (embed as ImageEmbed).image.width, 
+            height: (embed as ImageEmbed).image.height, 
+            format: 1 
+        };
 	  }
 	}
   
 	for (let attachment of message.attachments) {
 	  if (attachment.url.endsWith('.gif')) {
-		return attachment.url;
+		return { url: attachment.url, width: attachment.width, height: attachment.height, format: 1 };
 	  }
 	}
   
 	return null;
 }
-
-export function filterOutFirstAndLast(favorites: FrecencyStore): FrecencyStore {
-	const gifEntries = Object.entries(favorites.favoriteGifs.gifs);
-  
-	// Sort the gif entries by the order property
-	gifEntries.sort((a, b) => a[1].order - b[1].order);
-  
-	// Remove the first and last entries
-	if (gifEntries.length > 2) {
-	  gifEntries.pop();
-	  gifEntries.shift();
-	}
-  
-	// Construct the new favoriteGifs object
-	const newFavoriteGifs = gifEntries.reduce((gifs, [url, gif]) => {
-	  gifs[url] = gif;
-	  return gifs;
-	}, {} as Record<string, Gif>);
-  
-	// Return the new favorites object
-	return { ...favorites, favoriteGifs: { gifs: newFavoriteGifs } };
-  }  

@@ -3,9 +3,8 @@ import { findByProps, findByStoreName } from "@vendetta/metro"
 import { React } from "@vendetta/metro/common"
 import { Forms } from "@vendetta/ui/components"
 import { getAssetIDByName } from "@vendetta/ui/assets"
-import { FrecencyStore, Message, filterOutFirstAndLast, getGifUrl } from "./util"
+import { FrecencyStore, Message, addGifToFavorites, getGifDetails } from "./util"
 import { showToast } from "@vendetta/ui/toasts"
-import { logger } from "@vendetta"
 
 const ActionSheet = findByProps("openLazy", "hideActionSheet")
 const { FormRow, FormIcon } = Forms
@@ -22,18 +21,20 @@ const unpatch = before("openLazy", ActionSheet, (ctx) => {
             const message = msgProps?.props?.message ?? actionMessage?.message as Message
 
             if (!buttons || !message) return
-			const gifUrl = getGifUrl(message);
-			if (!gifUrl) return;
-			
+			const gifDetails = getGifDetails(message)
+			if (!gifDetails) return
+
 			buttons.unshift(
                 <FormRow
                     label="Add GIF to Favorites"
                     leading={<FormIcon style={{ opacity: 1 }} source={getAssetIDByName("ic_star_filled")} />}
                     onPress={() => {
                         ActionSheet.hideActionSheet()
+
+						const updatedGifs = addGifToFavorites(favorites.favoriteGifs.gifs, gifDetails);
+						favorites.favoriteGifs.gifs = updatedGifs
+
 						showToast("Added GIF to Favorites")
-						const test = filterOutFirstAndLast(favorites)
-						logger.log(test)
                     }}
                 />)
         })
