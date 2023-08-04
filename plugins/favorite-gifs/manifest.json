@@ -1,0 +1,14 @@
+{
+    "name": "FavoriteGifs",
+    "description": "Let's you mark gifs as favorite.",
+    "authors": [
+        {
+            "name": "castdrian",
+            "id": "224617799434108928"
+        }
+    ],
+    "main": "src/index.ts",
+    "vendetta": {
+        "icon": "ic_badge_staff"
+    }
+}
