@@ -33,7 +33,7 @@ const unpatch = before("openLazy", ActionSheet, (ctx) => {
                     onPress={() => {
                         ActionSheet.hideActionSheet()
 						showToast("Added GIF to Favorites")
-						logger.log(store)
+						logger.log(store.frecencyWithoutFetchingLatest)
                     }}
                 />)
         })
