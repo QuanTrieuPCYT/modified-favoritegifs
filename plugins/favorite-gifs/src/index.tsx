@@ -3,6 +3,7 @@ import { findByProps } from "@vendetta/metro"
 import { React } from "@vendetta/metro/common"
 import { Forms } from "@vendetta/ui/components"
 import { getAssetIDByName } from "@vendetta/ui/assets"
+import { Message, getGifUrl } from "./util"
 
 const ActionSheet = findByProps("openLazy", "hideActionSheet")
 const { FormRow, FormIcon } = Forms
@@ -15,11 +16,13 @@ const unpatch = before("openLazy", ActionSheet, (ctx) => {
             React.useEffect(() => () => { unpatch() }, [])
             let [msgProps, buttons] = component.props?.children?.props?.children?.props?.children
 
-            const message = msgProps?.props?.message ?? actionMessage?.message
+            const message = msgProps?.props?.message ?? actionMessage?.message as Message
 
             if (!buttons || !message) return
+			const gifUrl = getGifUrl(message);
+			if (!gifUrl) return;
 			
-			buttons.push(
+			buttons.unshift(
                 <FormRow
                     label="Add GIF to Favorites"
                     leading={<FormIcon style={{ opacity: 1 }} source={getAssetIDByName("ic_star_filled")} />}
