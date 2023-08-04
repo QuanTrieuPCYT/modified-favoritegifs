@@ -1,0 +1,1 @@
+(function(o,e){"use strict";var l={onLoad:function(){e.logger.log("Hello world!")},onUnload:function(){e.logger.log("Goodbye, world.")}};return o.default=l,Object.defineProperty(o,"__esModule",{value:!0}),o})({},vendetta);
