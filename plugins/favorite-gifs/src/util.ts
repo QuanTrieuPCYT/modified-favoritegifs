@@ -10,7 +10,7 @@ interface ImageEmbed {
 	};
 	fields: any[];
 }
-  
+
 interface GifvEmbed {
 	id: string;
 	url: string;
@@ -82,7 +82,13 @@ export interface Message {
 	embeds: (ImageEmbed | GifvEmbed)[];
 	attachments: Attachment[];
 }
-  
+
+export function getFilename(url: string): string {
+    const path = new URL(url).pathname;
+    const filename = path.substring(path.lastIndexOf('/') + 1);
+    return filename;
+}
+
 export function constructGif(currentGifs: Record<string, Gif>, gifDetails: GifDetails): Gif {
 	const maxOrder = Math.max(...Object.values(currentGifs).map(gif => gif.order));
 
@@ -98,38 +104,40 @@ export function constructGif(currentGifs: Record<string, Gif>, gifDetails: GifDe
 	return newGif;
 }
 
-export function getGifDetails(message: Message): GifDetails | null {
-	for (let embed of message.embeds) {
-	  if (embed.type === 'gifv') {
-		return { 
-			src: (embed as GifvEmbed).video.url,
-			url: (embed as GifvEmbed).url,
-			width: (embed as GifvEmbed).thumbnail.width,
-			height: (embed as GifvEmbed).thumbnail.height,
-			format: 2
-		};
-	  } else if (embed.type === 'image' && embed.url.endsWith('.gif')) {
-		return { 
-			src: (embed as ImageEmbed).image.url,
-			url: (embed as ImageEmbed).url, 
-			width: (embed as ImageEmbed).image.width, 
-			height: (embed as ImageEmbed).image.height, 
-			format: 1 
-		};
-	  }
-	}
-  
-	for (let attachment of message.attachments) {
-	  if (attachment.url.endsWith('.gif')) {
-		return { 
-			src: attachment.url,
-			url: attachment.url, 
-			width: attachment.width, 
-			height: attachment.height, 
-			format: 1 
-		};
-	  }
-	}
-  
-	return null;
+export function getGifDetails(message: Message): GifDetails[] {
+    const gifDetailsArray: GifDetails[] = [];
+
+    for (let embed of message.embeds) {
+        if (embed.type === 'gifv') {
+            gifDetailsArray.push({ 
+                src: (embed as GifvEmbed).video.url,
+                url: (embed as GifvEmbed).url,
+                width: (embed as GifvEmbed).thumbnail.width,
+                height: (embed as GifvEmbed).thumbnail.height,
+                format: 2
+            });
+        } else if (embed.type === 'image' && embed.url.endsWith('.gif')) {
+            gifDetailsArray.push({ 
+                src: (embed as ImageEmbed).image.url,
+                url: (embed as ImageEmbed).url, 
+                width: (embed as ImageEmbed).image.width, 
+                height: (embed as ImageEmbed).image.height, 
+                format: 1 
+            });
+        }
+    }
+    
+    for (let attachment of message.attachments) {
+        if (attachment.url.endsWith('.gif')) {
+            gifDetailsArray.push({ 
+                src: attachment.url,
+                url: attachment.url, 
+                width: attachment.width, 
+                height: attachment.height, 
+                format: 1 
+            });
+        }
+    }
+    
+    return gifDetailsArray;
 }
