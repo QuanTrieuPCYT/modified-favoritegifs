@@ -25,7 +25,7 @@ const unpatch = before("openLazy", ActionSheet, (ctx) => {
 			const gifDetails = getGifDetails(message)
 			if (!gifDetails) return
 
-			const isGifFavorite = favorites.favoriteGifs.gifs[gifDetails.url] !== undefined
+			const isGifFavorite = favorites.favoriteGifs.gifs[gifDetails.src] !== undefined
 
 			buttons.unshift(
 				<FormRow
