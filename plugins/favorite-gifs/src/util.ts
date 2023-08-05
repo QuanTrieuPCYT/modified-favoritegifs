@@ -50,9 +50,18 @@ interface Attachment {
 interface Gif {
 	format: number;
 	src: string;
+	url: string;
 	width: number;
 	height: number;
 	order: number;
+}
+
+interface GifDetails { 
+	src: string,
+	url: string,
+	width: number,
+	height: number,
+	format: number 
 }
 
 interface Versions {
@@ -82,6 +91,7 @@ export function constructGif(currentGifs: Record<string, Gif>, gifDetails: { url
 	const newGif: Gif = {
 		format: gifDetails.format,
 		src: gifDetails.url,
+		url: gifDetails.url,
 		width: gifDetails.width,
 		height: gifDetails.height,
 		order: maxOrder + 1,
@@ -90,10 +100,11 @@ export function constructGif(currentGifs: Record<string, Gif>, gifDetails: { url
 	return newGif;
 }
 
-export function getGifDetails(message: Message): { url: string, width: number, height: number, format: number } | null {
+export function getGifDetails(message: Message): GifDetails | null {
 	for (let embed of message.embeds) {
 	  if (embed.type === 'gifv') {
 		return { 
+			src: (embed as GifvEmbed).video.url,
 			url: (embed as GifvEmbed).url,
 			width: (embed as GifvEmbed).thumbnail.width,
 			height: (embed as GifvEmbed).thumbnail.height,
@@ -101,6 +112,7 @@ export function getGifDetails(message: Message): { url: string, width: number, h
 		};
 	  } else if (embed.type === 'image' && embed.url.endsWith('.gif')) {
 		return { 
+			src: (embed as ImageEmbed).image.url,
 			url: (embed as ImageEmbed).url, 
 			width: (embed as ImageEmbed).image.width, 
 			height: (embed as ImageEmbed).image.height, 
@@ -111,7 +123,13 @@ export function getGifDetails(message: Message): { url: string, width: number, h
   
 	for (let attachment of message.attachments) {
 	  if (attachment.url.endsWith('.gif')) {
-		return { url: attachment.url, width: attachment.width, height: attachment.height, format: 1 };
+		return { 
+			src: attachment.url,
+			url: attachment.url, 
+			width: attachment.width, 
+			height: attachment.height, 
+			format: 1 
+		};
 	  }
 	}
   
