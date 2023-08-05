@@ -35,9 +35,8 @@ const unpatch = before("openLazy", ActionSheet, (ctx) => {
 
 						favorites.updateAsync("favoriteGifs", state => {
                             state.gifs[newGif.src] = {
-                                ...newGif,
-                                order: Math.max(...Object.values(state.gifs as Record<string, Gif>).map(g => g.order)) + 1
-                            }
+                                ...newGif                           
+							}
                         }, 0)
 
 						showToast("Added GIF to Favorites")
