@@ -3,11 +3,12 @@ import { findByProps, findByStoreName } from "@vendetta/metro"
 import { React } from "@vendetta/metro/common"
 import { Forms } from "@vendetta/ui/components"
 import { getAssetIDByName } from "@vendetta/ui/assets"
-import { FrecencyStore, Gif, Message, constructGif, getGifDetails } from "./util"
+import { FrecencyStore, Message, constructGif, getGifDetails } from "./util"
 import { showToast } from "@vendetta/ui/toasts"
 
 const { FormRow, FormIcon } = Forms
 const ActionSheet = findByProps("openLazy", "hideActionSheet")
+const { addFavoriteGIF, removeFavoriteGIF } = findByProps("addFavoriteGIF", "removeFavoriteGIF");
 const favorites = findByStoreName("UserSettingsProtoStore").frecencyWithoutFetchingLatest as FrecencyStore
 
 const unpatch = before("openLazy", ActionSheet, (ctx) => {
@@ -24,22 +25,22 @@ const unpatch = before("openLazy", ActionSheet, (ctx) => {
 			const gifDetails = getGifDetails(message)
 			if (!gifDetails) return
 
+			const isGifFavorite = favorites.favoriteGifs.gifs[gifDetails.url] !== undefined
+
 			buttons.unshift(
                 <FormRow
-                    label="Add GIF to Favorites"
+                    label= { isGifFavorite ? "Remove from Favorites" : "Add to Favorites" }
                     leading={<FormIcon style={{ opacity: 1 }} source={getAssetIDByName("ic_star_filled")} />}
                     onPress={() => {
                         ActionSheet.hideActionSheet()
 
-						const newGif = constructGif(favorites.favoriteGifs.gifs, gifDetails)
-
-						favorites.updateAsync("favoriteGifs", state => {
-                            state.gifs[newGif.src] = {
-                                ...newGif                           
-							}
-                        }, 0)
-
-						showToast("Added GIF to Favorites")
+						if (isGifFavorite) {
+							removeFavoriteGIF(gifDetails.url)
+							showToast("Removed from Favorites")
+						} else {
+							addFavoriteGIF(constructGif(favorites.favoriteGifs.gifs, gifDetails))
+							showToast("Added to Favorites")
+						}
                     }}
                 />)
         })

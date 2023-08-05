@@ -1,5 +1,3 @@
-import { logger } from "@vendetta";
-
 interface ImageEmbed {
 	id: string;
 	url: string;
@@ -49,7 +47,7 @@ interface Attachment {
 	spoiler: boolean;
 }
 
-export interface Gif {
+interface Gif {
 	format: number;
 	src: string;
 	width: number;
