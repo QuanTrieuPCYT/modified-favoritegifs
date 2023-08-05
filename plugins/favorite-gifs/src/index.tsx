@@ -3,9 +3,8 @@ import { findByProps, findByStoreName } from "@vendetta/metro"
 import { React } from "@vendetta/metro/common"
 import { Forms } from "@vendetta/ui/components"
 import { getAssetIDByName } from "@vendetta/ui/assets"
-import { FrecencyStore, Message, constructGif, getGifDetails, logMethods } from "./util"
+import { FrecencyStore, Gif, Message, constructGif, getGifDetails } from "./util"
 import { showToast } from "@vendetta/ui/toasts"
-import { logger } from "@vendetta"
 
 const { FormRow, FormIcon } = Forms
 const ActionSheet = findByProps("openLazy", "hideActionSheet")
@@ -32,10 +31,14 @@ const unpatch = before("openLazy", ActionSheet, (ctx) => {
                     onPress={() => {
                         ActionSheet.hideActionSheet()
 
-						const thing = findByProps("updateAsync")
-						logMethods(thing)
-
 						const newGif = constructGif(favorites.favoriteGifs.gifs, gifDetails)
+
+						favorites.updateAsync("favoriteGifs", state => {
+                            state.gifs[newGif.src] = {
+                                ...newGif,
+                                order: Math.max(...Object.values(state.gifs as Record<string, Gif>).map(g => g.order)) + 1
+                            }
+                        }, 0)
 
 						showToast("Added GIF to Favorites")
                     }}

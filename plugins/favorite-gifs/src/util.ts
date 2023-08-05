@@ -49,7 +49,7 @@ interface Attachment {
 	spoiler: boolean;
 }
 
-interface Gif {
+export interface Gif {
 	format: number;
 	src: string;
 	width: number;
@@ -68,6 +68,7 @@ interface FavoriteGifs {
 }
 
 export interface FrecencyStore {
+	updateAsync(arg0: string, arg1: (state: any) => void, arg2: number): unknown;
 	versions: Versions;
 	favoriteGifs: FavoriteGifs;
 }  
@@ -117,12 +118,4 @@ export function getGifDetails(message: Message): { url: string, width: number, h
 	}
   
 	return null;
-}
-
-export function logMethods(obj: any): void {
-    const methodNames = Object.getOwnPropertyNames(obj.__proto__)
-        .concat(Object.getOwnPropertyNames(Object.getPrototypeOf(obj)))
-        .filter((key) => typeof obj[key] === 'function');
-
-    logger.log(methodNames);
 }
