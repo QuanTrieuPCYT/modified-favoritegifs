@@ -31,10 +31,9 @@ const unpatch = before("openLazy", ActionSheet, (ctx) => {
                     leading={<FormIcon style={{ opacity: 1 }} source={getAssetIDByName("ic_star_filled")} />}
                     onPress={() => {
                         ActionSheet.hideActionSheet()
-						
-						const store = findByStoreName("UserSettingsProtoStore");
-						const propertyNames = Object.getOwnPropertyNames(Object.getPrototypeOf(store));
-						const methods = propertyNames.filter(name => typeof store[name] === 'function');
+
+						const propertyNames = Object.getOwnPropertyNames(Object.getPrototypeOf(favorites));
+						const methods = propertyNames.filter(name => typeof favorites[name] === 'function');
 						logger.log(methods);
 
 						showToast("Added GIF to Favorites")
