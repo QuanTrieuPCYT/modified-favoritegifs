@@ -1,1 +1,1 @@
-{"name":"FavoriteGifs","description":"Let's you mark gifs as favorite and vice versa.","authors":[{"name":"castdrian","id":"224617799434108928"}],"main":"index.js","vendetta":{"icon":"ic_gif_24px"},"hash":"d8c20ade959009e99a0e8df6cda6e0e581117c55543a67c61626ac7102a2bc6a"}
+{"name":"FavoriteGifs","description":"Lets you favorite and unfavorite gifs.","authors":[{"name":"castdrian","id":"224617799434108928"}],"main":"index.js","vendetta":{"icon":"ic_gif_24px"},"hash":"092ec33cc6795d4978e77bbb9b3f9b62a391e7682844ff2e69ccf6fa52efac33"}
