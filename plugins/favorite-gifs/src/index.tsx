@@ -5,6 +5,7 @@ import { Forms } from "@vendetta/ui/components"
 import { getAssetIDByName } from "@vendetta/ui/assets"
 import { FrecencyStore, Message, addGifToFavorites, getGifDetails } from "./util"
 import { showToast } from "@vendetta/ui/toasts"
+import { logger } from "@vendetta"
 
 const ActionSheet = findByProps("openLazy", "hideActionSheet")
 const { FormRow, FormIcon } = Forms
@@ -30,9 +31,11 @@ const unpatch = before("openLazy", ActionSheet, (ctx) => {
                     leading={<FormIcon style={{ opacity: 1 }} source={getAssetIDByName("ic_star_filled")} />}
                     onPress={() => {
                         ActionSheet.hideActionSheet()
-
-						const updatedGifs = addGifToFavorites(favorites.favoriteGifs.gifs, gifDetails);
-						favorites.favoriteGifs.gifs = updatedGifs
+						
+						const store = findByStoreName("UserSettingsProtoStore");
+						const propertyNames = Object.getOwnPropertyNames(Object.getPrototypeOf(store));
+						const methods = propertyNames.filter(name => typeof store[name] === 'function');
+						logger.log(methods);
 
 						showToast("Added GIF to Favorites")
                     }}
