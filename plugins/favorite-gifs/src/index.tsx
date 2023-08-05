@@ -8,6 +8,7 @@ import { showToast } from "@vendetta/ui/toasts"
 
 const { FormRow, FormIcon } = Forms
 const ActionSheet = findByProps("openLazy", "hideActionSheet")
+const UserSettingsProtoStore = findByStoreName("UserSettingsProtoStore");
 const { addFavoriteGIF, removeFavoriteGIF } = findByProps("addFavoriteGIF", "removeFavoriteGIF");
 
 const unpatch = before("openLazy", ActionSheet, (ctx) => {
@@ -25,7 +26,6 @@ const unpatch = before("openLazy", ActionSheet, (ctx) => {
 			if (!gifDetailsArray.length) return
 
 			for (let gifDetails of gifDetailsArray) {
-				const UserSettingsProtoStore = findByStoreName("UserSettingsProtoStore");
 				const favorites = UserSettingsProtoStore.frecencyWithoutFetchingLatest as FrecencyStore;
 
 				const isGifFavorite = favorites.favoriteGifs.gifs[gifDetails.src] !== undefined || favorites.favoriteGifs.gifs[gifDetails.url] !== undefined;
