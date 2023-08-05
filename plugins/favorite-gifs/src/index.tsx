@@ -30,16 +30,9 @@ const unpatch = before("openLazy", ActionSheet, (ctx) => {
 				const isGifFavorite = favorites.favoriteGifs.gifs[gifDetails.src] !== undefined || favorites.favoriteGifs.gifs[gifDetails.url] !== undefined;
 				const filename = getFilename(gifDetails.url);
 			
-				let label = '';
-				if (gifDetailsArray.length > 1) {
-					label = isGifFavorite ? `Remove ${filename} from Favorites` : `Add ${filename} to Favorites`;
-				} else {
-					label = isGifFavorite ? 'Remove from Favorites' : 'Add to Favorites';
-				}
-			
 				buttons.unshift(
 					<FormRow
-						label= { label }
+						label= { isGifFavorite ? `Remove ${filename} from Favorites` : `Add ${filename} to Favorites` }
 						leading={<FormIcon style={{ opacity: 1 }} source={getAssetIDByName("ic_star_filled")} />}
 						onPress={() => {
 							ActionSheet.hideActionSheet()
@@ -54,7 +47,7 @@ const unpatch = before("openLazy", ActionSheet, (ctx) => {
 						}}
 					/>
 				)
-			}
+			}			
 		})
 	})
 })
