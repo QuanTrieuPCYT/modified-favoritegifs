@@ -3,12 +3,11 @@ import { findByProps, findByStoreName } from "@vendetta/metro"
 import { React } from "@vendetta/metro/common"
 import { Forms } from "@vendetta/ui/components"
 import { getAssetIDByName } from "@vendetta/ui/assets"
-import { FrecencyStore, Message, addGifToFavorites, getGifDetails } from "./util"
+import { FrecencyStore, Message, constructGif, getGifDetails } from "./util"
 import { showToast } from "@vendetta/ui/toasts"
-import { logger } from "@vendetta"
 
-const ActionSheet = findByProps("openLazy", "hideActionSheet")
 const { FormRow, FormIcon } = Forms
+const ActionSheet = findByProps("openLazy", "hideActionSheet")
 const favorites = findByStoreName("UserSettingsProtoStore").frecencyWithoutFetchingLatest as FrecencyStore
 
 const unpatch = before("openLazy", ActionSheet, (ctx) => {
@@ -32,11 +31,8 @@ const unpatch = before("openLazy", ActionSheet, (ctx) => {
                     onPress={() => {
                         ActionSheet.hideActionSheet()
 
-						logger.log("Methods:")
-						
-						const propertyNames = Object.getOwnPropertyNames(Object.getPrototypeOf(favorites.favoriteGifs));
-						const methods = propertyNames.filter(name => typeof favorites.favoriteGifs[name] === 'function');
-						logger.log(methods);
+						const newGif = constructGif(favorites.favoriteGifs.gifs, gifDetails)
+						favorites.favoriteGifs.gifs[newGif.src] = newGif;
 
 						showToast("Added GIF to Favorites")
                     }}

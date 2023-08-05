@@ -75,7 +75,7 @@ export interface Message {
 	attachments: Attachment[];
 }
   
-export function addGifToFavorites(currentGifs: Record<string, Gif>, gifDetails: { url: string, width: number, height: number, format: number }): Record<string, Gif> {
+export function constructGif(currentGifs: Record<string, Gif>, gifDetails: { url: string, width: number, height: number, format: number }): Gif {
     const maxOrder = Math.max(...Object.values(currentGifs).map(gif => gif.order));
 
     const newGif: Gif = {
@@ -86,10 +86,7 @@ export function addGifToFavorites(currentGifs: Record<string, Gif>, gifDetails: 
         order: maxOrder + 1,
     };
 
-    return {
-        ...currentGifs,
-        [gifDetails.url]: newGif
-    };
+    return newGif;
 }
 
 export function getGifDetails(message: Message): { url: string, width: number, height: number, format: number } | null {
