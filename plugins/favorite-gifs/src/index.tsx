@@ -24,7 +24,9 @@ const unpatch = before("openLazy", ActionSheet, (ctx) => {
 			const gifDetails = getGifDetails(message)
 			if (!gifDetails) return
 
-			const favorites = findByStoreName("UserSettingsProtoStore").frecencyWithoutFetchingLatest as FrecencyStore
+			const UserSettingsProtoStore = findByStoreName("UserSettingsProtoStore");
+			const favorites = UserSettingsProtoStore.frecencyWithoutFetchingLatest as FrecencyStore;
+
 			const isGifFavorite = favorites.favoriteGifs.gifs[gifDetails.src] !== undefined || favorites.favoriteGifs.gifs[gifDetails.url] !== undefined;
 
 			buttons.unshift(
