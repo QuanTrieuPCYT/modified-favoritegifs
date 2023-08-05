@@ -75,8 +75,6 @@ interface FavoriteGifs {
 }
 
 export interface FrecencyStore {
-	updateAsync(arg0: string, arg1: (state: any) => void, arg2: number): unknown;
-	versions: Versions;
 	favoriteGifs: FavoriteGifs;
 }  
   
