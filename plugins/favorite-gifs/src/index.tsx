@@ -32,13 +32,10 @@ const unpatch = before("openLazy", ActionSheet, (ctx) => {
                     onPress={() => {
                         ActionSheet.hideActionSheet()
 
-						logger.log("Store methods:", logMethods(favorites))
-						logger.log("FavGif methods:", logMethods(favorites.favoriteGifs))
-						logger.log("Gif methods:", logMethods(favorites.favoriteGifs.gifs))
+						const thing = findByProps("updateAsync")
+						logMethods(thing)
 
 						const newGif = constructGif(favorites.favoriteGifs.gifs, gifDetails)
-						favorites.favoriteGifs.gifs[newGif.src] = newGif;
-						favorites.favoriteGifs = {...favorites.favoriteGifs}; 
 
 						showToast("Added GIF to Favorites")
                     }}
