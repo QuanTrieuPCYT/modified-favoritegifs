@@ -47,7 +47,7 @@ interface Attachment {
 	spoiler: boolean;
 }
 
-export interface Gif {
+interface Gif {
 	format: number;
 	src: string;
 	width: number;
