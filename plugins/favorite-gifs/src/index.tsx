@@ -32,8 +32,10 @@ const unpatch = before("openLazy", ActionSheet, (ctx) => {
                     onPress={() => {
                         ActionSheet.hideActionSheet()
 
-						const propertyNames = Object.getOwnPropertyNames(Object.getPrototypeOf(favorites));
-						const methods = propertyNames.filter(name => typeof favorites[name] === 'function');
+						logger.log("Methods:")
+						
+						const propertyNames = Object.getOwnPropertyNames(Object.getPrototypeOf(favorites.favoriteGifs));
+						const methods = propertyNames.filter(name => typeof favorites.favoriteGifs[name] === 'function');
 						logger.log(methods);
 
 						showToast("Added GIF to Favorites")
