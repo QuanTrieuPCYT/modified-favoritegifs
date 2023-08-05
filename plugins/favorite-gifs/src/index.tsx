@@ -9,8 +9,6 @@ import { showToast } from "@vendetta/ui/toasts"
 const { FormRow, FormIcon } = Forms
 const ActionSheet = findByProps("openLazy", "hideActionSheet")
 const { addFavoriteGIF, removeFavoriteGIF } = findByProps("addFavoriteGIF", "removeFavoriteGIF");
-const UserSettingsProtoStore = findByStoreName("UserSettingsProtoStore");
-const favorites = UserSettingsProtoStore.frecencyWithoutFetchingLatest as FrecencyStore;
 
 const unpatch = before("openLazy", ActionSheet, (ctx) => {
 	const [component, args, actionMessage] = ctx
@@ -27,6 +25,9 @@ const unpatch = before("openLazy", ActionSheet, (ctx) => {
 			if (!gifDetailsArray.length) return
 
 			for (let gifDetails of gifDetailsArray) {
+				const UserSettingsProtoStore = findByStoreName("UserSettingsProtoStore");
+				const favorites = UserSettingsProtoStore.frecencyWithoutFetchingLatest as FrecencyStore;
+
 				const isGifFavorite = favorites.favoriteGifs.gifs[gifDetails.src] !== undefined || favorites.favoriteGifs.gifs[gifDetails.url] !== undefined;
 				const filename = getFilename(gifDetails.url);
 			
@@ -39,10 +40,10 @@ const unpatch = before("openLazy", ActionSheet, (ctx) => {
 			
 							if (isGifFavorite) {
 								removeFavoriteGIF(gifDetails.url)
-								showToast(`Removed ${filename} from Favorites`, getAssetIDByName("ic_checkmark"))
+								showToast(`Removed ${filename} from Favorites`, getAssetIDByName("ic_unread_checkmark"))
 							} else {
 								addFavoriteGIF(constructGif(favorites.favoriteGifs.gifs, gifDetails))
-								showToast(`Added ${filename} to Favorites`, getAssetIDByName("ic_checkmark"))
+								showToast(`Added ${filename} to Favorites`, getAssetIDByName("ic_unread_checkmark"))
 							}
 						}}
 					/>
