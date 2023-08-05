@@ -1,3 +1,5 @@
+import { logger } from "@vendetta";
+
 interface ImageEmbed {
 	id: string;
 	url: string;
@@ -115,4 +117,12 @@ export function getGifDetails(message: Message): { url: string, width: number, h
 	}
   
 	return null;
+}
+
+export function logMethods(obj: any): void {
+    const methodNames = Object.getOwnPropertyNames(obj.__proto__)
+        .concat(Object.getOwnPropertyNames(Object.getPrototypeOf(obj)))
+        .filter((key) => typeof obj[key] === 'function');
+
+    logger.log(methodNames);
 }
