@@ -3,7 +3,7 @@ import { findByProps, findByStoreName } from "@vendetta/metro"
 import { React } from "@vendetta/metro/common"
 import { Forms } from "@vendetta/ui/components"
 import { getAssetIDByName } from "@vendetta/ui/assets"
-import { FrecencyStore, Message, constructGif, getGifDetails } from "./util"
+import { FrecencyStore, Gif, Message, constructGif, getGifDetails } from "./util"
 import { showToast } from "@vendetta/ui/toasts"
 
 const { FormRow, FormIcon } = Forms
@@ -38,7 +38,8 @@ const unpatch = before("openLazy", ActionSheet, (ctx) => {
 							removeFavoriteGIF(gifDetails.url)
 							showToast("Removed from Favorites")
 						} else {
-							addFavoriteGIF(constructGif(favorites.favoriteGifs.gifs, gifDetails))
+							const newGifEntry: Record<string, Gif> = { [gifDetails.url]: constructGif(favorites.favoriteGifs.gifs, gifDetails) }
+							addFavoriteGIF(newGifEntry)
 							showToast("Added to Favorites")
 						}
 					}}
