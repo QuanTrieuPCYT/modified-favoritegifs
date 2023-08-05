@@ -85,12 +85,12 @@ export interface Message {
 	attachments: Attachment[];
 }
   
-export function constructGif(currentGifs: Record<string, Gif>, gifDetails: { url: string, width: number, height: number, format: number }): Gif {
+export function constructGif(currentGifs: Record<string, Gif>, gifDetails: GifDetails): Gif {
 	const maxOrder = Math.max(...Object.values(currentGifs).map(gif => gif.order));
 
 	const newGif: Gif = {
 		format: gifDetails.format,
-		src: gifDetails.url,
+		src: gifDetails.src,
 		url: gifDetails.url,
 		width: gifDetails.width,
 		height: gifDetails.height,
