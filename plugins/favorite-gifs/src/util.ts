@@ -77,35 +77,35 @@ export interface Message {
 }
   
 export function constructGif(currentGifs: Record<string, Gif>, gifDetails: { url: string, width: number, height: number, format: number }): Gif {
-    const maxOrder = Math.max(...Object.values(currentGifs).map(gif => gif.order));
+	const maxOrder = Math.max(...Object.values(currentGifs).map(gif => gif.order));
 
-    const newGif: Gif = {
-        format: gifDetails.format,
-        src: gifDetails.url,
-        width: gifDetails.width,
-        height: gifDetails.height,
-        order: maxOrder + 1,
-    };
+	const newGif: Gif = {
+		format: gifDetails.format,
+		src: gifDetails.url,
+		width: gifDetails.width,
+		height: gifDetails.height,
+		order: maxOrder + 1,
+	};
 
-    return newGif;
+	return newGif;
 }
 
 export function getGifDetails(message: Message): { url: string, width: number, height: number, format: number } | null {
 	for (let embed of message.embeds) {
 	  if (embed.type === 'gifv') {
 		return { 
-            url: (embed as GifvEmbed).url,
-            width: (embed as GifvEmbed).thumbnail.width,
-            height: (embed as GifvEmbed).thumbnail.height,
-            format: 2
-        };
+			url: (embed as GifvEmbed).url,
+			width: (embed as GifvEmbed).thumbnail.width,
+			height: (embed as GifvEmbed).thumbnail.height,
+			format: 2
+		};
 	  } else if (embed.type === 'image' && embed.url.endsWith('.gif')) {
 		return { 
-            url: (embed as ImageEmbed).url, 
-            width: (embed as ImageEmbed).image.width, 
-            height: (embed as ImageEmbed).image.height, 
-            format: 1 
-        };
+			url: (embed as ImageEmbed).url, 
+			width: (embed as ImageEmbed).image.width, 
+			height: (embed as ImageEmbed).image.height, 
+			format: 1 
+		};
 	  }
 	}
   

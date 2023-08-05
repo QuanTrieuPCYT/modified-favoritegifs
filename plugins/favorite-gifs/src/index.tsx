@@ -12,27 +12,27 @@ const { addFavoriteGIF, removeFavoriteGIF } = findByProps("addFavoriteGIF", "rem
 const favorites = findByStoreName("UserSettingsProtoStore").frecencyWithoutFetchingLatest as FrecencyStore
 
 const unpatch = before("openLazy", ActionSheet, (ctx) => {
-    const [component, args, actionMessage] = ctx
-    if (args !== "MessageLongPressActionSheet") return
-    component.then((instance: any) => {
-        const unpatch = after("default", instance, (_, component) => {
-            React.useEffect(() => () => { unpatch() }, [])
-            let [msgProps, buttons] = component.props?.children?.props?.children?.props?.children
+	const [component, args, actionMessage] = ctx
+	if (args !== "MessageLongPressActionSheet") return
+	component.then((instance: any) => {
+		const unpatch = after("default", instance, (_, component) => {
+			React.useEffect(() => () => { unpatch() }, [])
+			let [msgProps, buttons] = component.props?.children?.props?.children?.props?.children
 
-            const message = msgProps?.props?.message ?? actionMessage?.message as Message
+			const message = msgProps?.props?.message ?? actionMessage?.message as Message
 
-            if (!buttons || !message) return
+			if (!buttons || !message) return
 			const gifDetails = getGifDetails(message)
 			if (!gifDetails) return
 
 			const isGifFavorite = favorites.favoriteGifs.gifs[gifDetails.url] !== undefined
 
 			buttons.unshift(
-                <FormRow
-                    label= { isGifFavorite ? "Remove from Favorites" : "Add to Favorites" }
-                    leading={<FormIcon style={{ opacity: 1 }} source={getAssetIDByName("ic_star_filled")} />}
-                    onPress={() => {
-                        ActionSheet.hideActionSheet()
+				<FormRow
+					label= { isGifFavorite ? "Remove from Favorites" : "Add to Favorites" }
+					leading={<FormIcon style={{ opacity: 1 }} source={getAssetIDByName("ic_star_filled")} />}
+					onPress={() => {
+						ActionSheet.hideActionSheet()
 
 						if (isGifFavorite) {
 							removeFavoriteGIF(gifDetails.url)
@@ -41,10 +41,10 @@ const unpatch = before("openLazy", ActionSheet, (ctx) => {
 							addFavoriteGIF(constructGif(favorites.favoriteGifs.gifs, gifDetails))
 							showToast("Added to Favorites")
 						}
-                    }}
-                />)
-        })
-    })
+					}}
+				/>)
+		})
+	})
 })
 
 export const onUnload = () => unpatch()
