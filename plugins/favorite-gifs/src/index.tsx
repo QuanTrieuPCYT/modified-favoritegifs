@@ -25,7 +25,7 @@ const unpatch = before("openLazy", ActionSheet, (ctx) => {
 			const gifDetails = getGifDetails(message)
 			if (!gifDetails) return
 
-			const isGifFavorite = favorites.favoriteGifs.gifs[gifDetails.src] !== undefined
+			const isGifFavorite = favorites.favoriteGifs.gifs[gifDetails.src] !== undefined || favorites.favoriteGifs.gifs[gifDetails.url] !== undefined;
 
 			buttons.unshift(
 				<FormRow
@@ -36,10 +36,10 @@ const unpatch = before("openLazy", ActionSheet, (ctx) => {
 
 						if (isGifFavorite) {
 							removeFavoriteGIF(gifDetails.url)
-							showToast("Removed from Favorites")
+							showToast("Removed from Favorites", 855)
 						} else {
 							addFavoriteGIF(constructGif(favorites.favoriteGifs.gifs, gifDetails))
-							showToast("Added to Favorites")
+							showToast("Added to Favorites", 855)
 						}
 					}}
 				/>)
