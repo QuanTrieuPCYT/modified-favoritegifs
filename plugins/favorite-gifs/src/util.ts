@@ -11,6 +11,25 @@ interface ImageEmbed {
 	fields: any[];
 }
 
+interface VideoEmbed {
+	id: string;
+	url: string;
+	type: string;
+	thumbnail: {
+		url: string;
+		proxyURL: string;
+		width: number;
+		height: number;
+	};
+	video: {
+	  url: string;
+	  proxyURL: string;
+	  width: number;
+	  height: number;
+	};
+	fields: any[];
+}
+
 interface GifvEmbed {
 	id: string;
 	url: string;
@@ -61,13 +80,8 @@ interface GifDetails {
 	url: string,
 	width: number,
 	height: number,
-	format: number 
-}
-
-interface Versions {
-	clientVersion: number;
-	serverVersion: number;
-	dataVersion: number;
+	format: number,
+	isVideo?: boolean
 }
 
 interface FavoriteGifs {
@@ -116,7 +130,7 @@ export function getGifDetails(message: Message): GifDetails[] {
                 height: (embed as GifvEmbed).thumbnail.height,
                 format: 2
             });
-        } else if (embed.type === 'image' && embed.url.endsWith('.gif')) {
+        } else if (embed.type === 'image') {
             gifDetailsArray.push({ 
                 src: (embed as ImageEmbed).image.url,
                 url: (embed as ImageEmbed).url, 
@@ -124,17 +138,35 @@ export function getGifDetails(message: Message): GifDetails[] {
                 height: (embed as ImageEmbed).image.height, 
                 format: 1 
             });
+        } else if (embed.type === 'video') {
+            gifDetailsArray.push({ 
+                src: (embed as VideoEmbed).video.url,
+                url: (embed as VideoEmbed).url,
+                width: (embed as VideoEmbed).thumbnail.width,
+                height: (embed as VideoEmbed).thumbnail.height,
+                format: 2,
+				isVideo: true
+            });
         }
     }
     
     for (let attachment of message.attachments) {
-        if (attachment.url.endsWith('.gif')) {
-            gifDetailsArray.push({ 
+        if (attachment.content_type.includes('image')) {
+            gifDetailsArray.push({
                 src: attachment.url,
                 url: attachment.url, 
                 width: attachment.width, 
                 height: attachment.height, 
                 format: 1 
+            });
+        } else if (attachment.content_type.includes('video')) {
+            gifDetailsArray.push({
+                src: attachment.url,
+                url: attachment.url, 
+                width: attachment.width, 
+                height: attachment.height, 
+                format: 2,
+				isVideo: true
             });
         }
     }
