@@ -151,7 +151,7 @@ export function getGifDetails(message: Message): GifDetails[] {
     }
     
     for (let attachment of message.attachments) {
-        if (attachment.content_type.includes('image')) {
+        if (attachment.content_type && attachment.content_type.includes('image')) {
             gifDetailsArray.push({
                 src: attachment.url,
                 url: attachment.url, 
@@ -159,14 +159,14 @@ export function getGifDetails(message: Message): GifDetails[] {
                 height: attachment.height, 
                 format: 1 
             });
-        } else if (attachment.content_type.includes('video')) {
+        } else if (attachment.content_type && attachment.content_type.includes('video')) {
             gifDetailsArray.push({
                 src: attachment.url,
                 url: attachment.url, 
                 width: attachment.width, 
                 height: attachment.height, 
                 format: 2,
-				isVideo: true
+                isVideo: true
             });
         }
     }
