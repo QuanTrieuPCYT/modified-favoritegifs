@@ -1,0 +1,14 @@
+{
+    "name": "CleanUnicode",
+    "description": "Converts unicode characters into their ASCII equivalent.",
+    "authors": [
+        {
+            "name": "castdrian",
+            "id": "224617799434108928"
+        }
+    ],
+    "main": "src/index.ts",
+    "vendetta": {
+        "icon": "ic_add_text"
+    }
+}
