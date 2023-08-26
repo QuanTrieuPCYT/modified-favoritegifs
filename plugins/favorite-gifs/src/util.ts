@@ -1,3 +1,11 @@
+import { findByProps } from "@vendetta/metro";
+import { getAssetIDByName } from "@vendetta/ui/assets";
+import { showToast } from "@vendetta/ui/toasts";
+import { showConfirmationAlert } from "@vendetta/ui/alerts";
+
+const ActionSheet = findByProps("openLazy", "hideActionSheet");
+const { addFavoriteGIF, removeFavoriteGIF } = findByProps("addFavoriteGIF", "removeFavoriteGIF");
+
 interface ImageEmbed {
 	id: string;
 	url: string;
@@ -75,7 +83,7 @@ interface Gif {
 	order: number;
 }
 
-interface GifDetails { 
+export interface GifDetails { 
 	src: string,
 	url: string,
 	width: number,
@@ -173,3 +181,54 @@ export function getGifDetails(message: Message): GifDetails[] {
     
     return gifDetailsArray;
 }
+
+export function handleAddFavorite(gifDetails: GifDetails, favorites: FrecencyStore) {
+    const filename = getFilename(gifDetails.url);
+
+    if (gifDetails.isVideo) {
+        showConfirmationAlert({
+            title: "Add video to Favorites",
+            content: "If a video is the first entry in the GIF picker, on mobile this breaks the picker until a new valid item is added or the video is removed. It will only show on Desktop.",
+            confirmText: "Add to Favorites",
+            cancelText: "Cancel",
+            onConfirm: () => {
+                addFavoriteGIF(constructGif(favorites.favoriteGifs.gifs, gifDetails));
+                showToast(`Added ${filename} to Favorites`, getAssetIDByName("check"));
+            }
+        });
+        return;
+    }
+    addFavoriteGIF(constructGif(favorites.favoriteGifs.gifs, gifDetails));
+    showToast(`Added ${filename} to Favorites`, getAssetIDByName("check"));
+}
+
+export function handleRemoveFavorite(gifDetails: GifDetails) {
+    const filename = getFilename(gifDetails.url);
+    removeFavoriteGIF(gifDetails.url);
+    showToast(`Removed ${filename} from Favorites`, getAssetIDByName("check"));
+}
+
+export const createOnPressHandler = (gifDetails: GifDetails, favorites: FrecencyStore, isGifFavorite: boolean, filename: string) => () => {
+	ActionSheet.hideActionSheet();
+  
+	if (isGifFavorite) {
+	  removeFavoriteGIF(gifDetails.url);
+	  showToast(`Removed ${filename} from Favorites`, getAssetIDByName("check"));
+	} else {
+	  if (gifDetails.isVideo) {
+		showConfirmationAlert({
+		  title: "Add video to Favorites",
+		  content: "If a video is the first entry in the GIF picker, on mobile this breaks the picker until a new valid item is added or the video is removed. It will only show on Desktop.",
+		  confirmText: "Add to Favorites",
+		  cancelText: "Cancel",
+		  onConfirm: () => {
+			addFavoriteGIF(constructGif(favorites.favoriteGifs.gifs, gifDetails));
+			showToast(`Added ${filename} to Favorites`, getAssetIDByName("check"));
+		  }
+		});
+		return;
+	  }
+	  addFavoriteGIF(constructGif(favorites.favoriteGifs.gifs, gifDetails));
+	  showToast(`Added ${filename} to Favorites`, getAssetIDByName("check"));
+	}
+  };
