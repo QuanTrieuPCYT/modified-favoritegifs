@@ -1,5 +1,5 @@
 import { before, after } from "@vendetta/patcher";
-import { findByProps, findByStoreName } from "@vendetta/metro";
+import { find, findByProps, findByStoreName } from "@vendetta/metro";
 import { React } from "@vendetta/metro/common";
 import { Forms } from "@vendetta/ui/components";
 import { getAssetIDByName } from "@vendetta/ui/assets";
@@ -10,7 +10,7 @@ import { showConfirmationAlert } from "@vendetta/ui/alerts";
 import settings from "./settings";
 
 const { FormRow, FormIcon } = Forms;
-const ActionSheet = findByProps("openLazy", "hideActionSheet");
+const ActionSheet = findByProps("ActionSheet")?.ActionSheet ?? find((x) => x.render?.name === "ActionSheet");
 const UserSettingsProtoStore = findByStoreName("UserSettingsProtoStore");
 const { addFavoriteGIF, removeFavoriteGIF } = findByProps("addFavoriteGIF", "removeFavoriteGIF");
 
