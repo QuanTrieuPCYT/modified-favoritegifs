@@ -10,12 +10,11 @@ import { showConfirmationAlert } from "@vendetta/ui/alerts";
 import settings from "./settings";
 
 const { FormRow, FormIcon } = Forms;
-const ActionSheet = findByProps("ActionSheet")?.ActionSheet ?? find((x) => x.render?.name === "ActionSheet");
+const ActionSheet = findByProps("openLazy", "hideActionSheet")
 const UserSettingsProtoStore = findByStoreName("UserSettingsProtoStore");
 const { addFavoriteGIF, removeFavoriteGIF } = findByProps("addFavoriteGIF", "removeFavoriteGIF");
 
-const unpatch = before("openLazy", ActionSheet, (ctx) => {
-  const [component, args, actionMessage] = ctx;
+const unpatch = before("openLazy", ActionSheet, ([component, args, actionMessage]) => {
   if (args !== "MessageLongPressActionSheet") return;
 
   component.then((instance: any) => {
