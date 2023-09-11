@@ -1,30 +1,33 @@
 import { before, after } from "@vendetta/patcher";
-import { find, findByProps, findByStoreName } from "@vendetta/metro";
+import { findByProps, findByStoreName } from "@vendetta/metro";
 import { React } from "@vendetta/metro/common";
-import { Forms } from "@vendetta/ui/components";
 import { getAssetIDByName } from "@vendetta/ui/assets";
-import { FrecencyStore, Message, constructGif, createOnPressHandler, getFilename, getGifDetails } from "./util";
+import { FrecencyStore, constructGif, createOnPressHandler, getFilename, getGifDetails } from "./util";
 import { showToast } from "@vendetta/ui/toasts";
 import { storage } from "@vendetta/plugin";
 import { showConfirmationAlert } from "@vendetta/ui/alerts";
 import settings from "./settings";
+import { findInReactTree } from "@vendetta/utils";
+import CoolRow from "./components/CoolRow";
 
-const { FormRow, FormIcon } = Forms;
 const ActionSheet = findByProps("openLazy", "hideActionSheet")
 const UserSettingsProtoStore = findByStoreName("UserSettingsProtoStore");
 const { addFavoriteGIF, removeFavoriteGIF } = findByProps("addFavoriteGIF", "removeFavoriteGIF");
 
 const unpatch = before("openLazy", ActionSheet, ([component, args, actionMessage]) => {
-  if (args !== "MessageLongPressActionSheet") return;
+  const message = actionMessage?.message;
+  if (args !== "MessageLongPressActionSheet" || !message) return;
 
   component.then((instance: any) => {
-    const unpatch = after("default", instance, (_, component) => {
+    const unpatch = after("default", instance, (_, comp) => {
       React.useEffect(() => () => { unpatch() }, []);
-      let [msgProps, buttons] = component.props?.children?.props?.children?.props?.children;
+      
+      const buttons = findInReactTree(
+        comp,
+        (x) => x?.[0]?.type?.name === "ButtonRow"
+      );
+      if (!buttons) return comp;
 
-      const message = msgProps?.props?.message ?? actionMessage?.message as Message;
-
-      if (!buttons || !message) return;
       const gifDetailsArray = getGifDetails(message);
       if (!gifDetailsArray.length) return;
 
@@ -38,41 +41,41 @@ const unpatch = before("openLazy", ActionSheet, ([component, args, actionMessage
         const filename = getFilename(gifDetails.url);
 
         buttons.unshift(
-          <FormRow
+          <CoolRow
             label={isGifFavorite ? `Remove ${filename} from Favorites` : `Add ${filename} to Favorites`}
-            leading={<FormIcon style={{ opacity: 1 }} source={isGifFavorite ? getAssetIDByName("ic_clear") : getAssetIDByName("ic_star_filled")} />}
+            icon={isGifFavorite ? getAssetIDByName("ic_clear") : getAssetIDByName("ic_star_filled")}
             onPress={createOnPressHandler(gifDetails, favorites, isGifFavorite, filename)}
           />
         );
 
         if (isGifFavorite && !isGifTopFavorite) {
           buttons.unshift(
-            <FormRow
+            <CoolRow
               label={`Bump ${filename} to the top of Favorites`}
-              leading={<FormIcon style={{ opacity: 1 }} source={getAssetIDByName("ic_activity_24px")} />}
+              icon={getAssetIDByName("ic_activity_24px")}
               onPress={
-				() => {
-						ActionSheet.hideActionSheet();
+                () => {
+                  ActionSheet.hideActionSheet();
 
-						if (storage.confirm) {
-							showConfirmationAlert({
-								title: "Bump Favorite",
-								content: `Are you sure you want to bump ${filename} to the top of your favorites?`,
-								confirmText: "Bump",
-								onConfirm: () => {
-									removeFavoriteGIF(gifDetails.url);
-									addFavoriteGIF(constructGif(favorites.favoriteGifs.gifs, gifDetails));
-									showToast(`Bumped ${filename} to the top of Favorites`, getAssetIDByName("check"));
-								}
-							});
-						}				
-						else {
-							removeFavoriteGIF(gifDetails.url);
-							addFavoriteGIF(constructGif(favorites.favoriteGifs.gifs, gifDetails));
-							showToast(`Bumped ${filename} to the top of Favorites`, getAssetIDByName("check"));
-						}
-					}
-				}
+                  if (storage.confirm) {
+                    showConfirmationAlert({
+                      title: "Bump Favorite",
+                      content: `Are you sure you want to bump ${filename} to the top of your favorites?`,
+                      confirmText: "Bump",
+                      onConfirm: () => {
+                        removeFavoriteGIF(gifDetails.url);
+                        addFavoriteGIF(constructGif(favorites.favoriteGifs.gifs, gifDetails));
+                        showToast(`Bumped ${filename} to the top of Favorites`, getAssetIDByName("check"));
+                      }
+                    });
+                  }				
+                  else {
+                    removeFavoriteGIF(gifDetails.url);
+                    addFavoriteGIF(constructGif(favorites.favoriteGifs.gifs, gifDetails));
+                    showToast(`Bumped ${filename} to the top of Favorites`, getAssetIDByName("check"));
+                  }
+                }
+              }
             />
           );
         }
