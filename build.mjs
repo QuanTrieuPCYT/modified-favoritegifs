@@ -8,6 +8,8 @@ import commonjs from "@rollup/plugin-commonjs";
 import nodeResolve from "@rollup/plugin-node-resolve";
 import swc from "@swc/core";
 
+const minify = !process.argv.includes("--nominify");
+
 const extensions = [".js", ".jsx", ".mjs", ".ts", ".tsx", ".cts", ".mts"];
 
 /** @type import("rollup").InputPluginOption */
@@ -45,7 +47,7 @@ const plugins = [
             return result.code;
         },
     },
-    esbuild({ minify: true }),
+    esbuild({ minify }),
 ];
 
 for (let plug of await readdir("./plugins")) {
